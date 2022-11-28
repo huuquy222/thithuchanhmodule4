@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+  <title>List city</title>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script type="text/javascript">
+
+    function addNewCity() {
+      //lay du lieu
+      let name = $('#name').val();
+      let country = $('#country').val();
+      let area = $('#area').val();
+      let population = $('#population')
+      let GDP = $('GDP')
+      let describe = $('describe')
+      let city = {
+        name: name,
+        country: country,
+        area: area,
+        population: population,
+        GDP : GDP,
+        describe: describe,
+      };
+
+      // goi ajax
+      $.ajax({
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        },
+        type: "POST",
+        data: JSON.stringify(city),
+        //tên API
+        url: "/city",
+        //xử lý khi thành công
+        success: console.log('success')
+
+      });
+      //chặn sự kiện mặc định của thẻ
+      event.preventDefault();
+    }
+
+    function getcity(city) {
+      return `<tr><td >${city.name}</td><td >${city.country}</td><td >${city.area}</td> <tr><td >${city.population}</td> <tr><td >${city.GDP}</td>  <tr><td >${city.describe}</td>` +
+              `<td><a class="deletecity" href="${city.id}">Delete</a></td></tr>`;
+    }
+
+    function successHandler() {
+      $.ajax({
+        type: "GET",
+        //tên API
+        url: "/city",
+        //xử lý khi thành công
+        success: function (data) {
+          // hien thi danh sach o day
+          let content = '    <tr>\n' +
+                  '        <td>name</td>\n' +
+                  '        <td>country</td>\n' +
+                  '        <td>area</td>\n' +
+                  '        <td>population</td>\n' +
+                  '        <td>GDP</td>\n' +
+                  '        <td>area</td>\n' +
+                  '    </tr>';
+          for (let i = 0; i < data.length; i++) {
+            content += getcity(data[i]);
+          }
+          document.getElementById('smartphoneList').innerHTML = content;
+        }
+      });
+    }
+
+    function addNewCity() {
+      //lay du lieu
+      let name = $('#name').val();
+      let country = $('#country').val();
+      let area = $('#area').val();
+      let population = $('#population')
+      let GDP = $('GDP')
+      let describe = $('describe')
+      let city = {
+        name: name,
+        country: country,
+        area: area,
+        population: population,
+        GDP : GDP,
+        describe: describe,
+      };
+      // goi ajax
+      $.ajax({
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        },
+        type: "POST",
+        data: JSON.stringify(addNewCity()),
+        //tên API
+        url: "/cities",
+        //xử lý khi thành công
+        success: successHandler
+
+      });
+      //chặn sự kiện mặc định của thẻ
+      event.preventDefault();
+    }
+
+    $(document).ready(function () {
+      //sư kiện nào thực hiện Ajax
+      $('.deleteSmartphone').click(function (event) {
+        //lay du lieu
+        let a = $(this);
+        let smartphoneId = a.attr("href");
+        // goi ajax
+        $.ajax({
+          type: "DELETE",
+          //tên API
+          url: `/cities/${cityid}`,
+          //xử lý khi thành công
+          success: function (data) {
+            a.parent().parent().remove();
+          }
+
+        });
+        //chặn sự kiện mặc định của thẻ
+        event.preventDefault();
+      });
+    })
+
+  </script>
+</head>
+<body>
+<form id="add-smartphone">
+  <table>
+    <tr>
+      <td>Name:</td>
+      <td><input type="text" id="producer" placeholder="producer"></td>
+    </tr>
+    <tr>
+      <td>Country:</td>
+      select
+      <select>
+        <option> Hồ Chí Minh </option>
+        <option> Buôn Mê Thuột </option>
+        <option> Đà Nẵng </option>
+        <option> Quảng Nam </option>
+        <option> Quảng Ngãi </option>
+        <option> Hà Nội </option>
+        <option> Hải Phòng</option>
+      </select>
+    </tr>
+    <tr>
+      <td>Area:</td>
+      <td><input type="text" id="Area" placeholder="Area"></td>
+    </tr>
+
+    <tr>
+      <td>Population:</td>
+      <td><input type="text" id="Population" placeholder="Population"></td>
+    </tr>
+
+    <tr>
+      <td>GDP:</td>
+      <td><input type="text" id="GDP" placeholder="GDP"></td>
+    </tr>
+    <tr>
+      <td>Describe:</td>
+      <td><input type="text" id="Describe" placeholder="Describe"></td>
+    </tr>
+    <tr>
+      <td></td>
+      <td><input type="submit" value="Add" onclick="addNewCity()"></td>
+    </tr>
+  </table>
+</form>
+<h1>Smartphone List</h1>
+<table id="smartphoneList">
+  <tr>
+    <td>Name</td>
+    <td>Country</td>
+    <td>Area</td>
+    <td>Population</td>
+    <td>GDP</td>
+    <td>Describe</td>
+  </tr>
+  <th:block th:each="smartphone: ${city}">
+    <tr>
+      <td th:text="${city.name}"></td>
+      <td th:text="${city.country}"></td>
+      <td th:text="${city.area}"></td>
+      <td th:text="${city.population}"></td>
+      <td th:text="${city.GDP}"></td>
+      <td th:text="${city.describe}"></td>
+      <td><a class="deleteCity" th:href="${city.getId()}">Delete</a></td>
+    </tr>
+  </th:block>
+</table>
+</body>
+</html>
